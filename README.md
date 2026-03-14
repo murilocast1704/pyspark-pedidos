@@ -31,7 +31,7 @@ Java (JDK) 11
 PySpark 3.5.0
 
 # Clone o repositório
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/murilocast1704/pyspark-pedidos.git
 cd pyspark-pedidos
 
 # Crie e ative o ambiente virtual
