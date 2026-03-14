@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+ 
+[project]
+name = "pyspark-pedidos"
+version = "1.0.0"
+description = "Relatório PySpark de pedidos com pagamentos recusados e avaliação de fraude"
+requires-python = ">=3.10"
+dependencies = [
+    "pyspark>=3.5.0",
+]
+ 
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov"]
+ 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
