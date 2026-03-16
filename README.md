@@ -199,8 +199,6 @@ tests/test_pedidos_logic.py::test_filtrar_ano                            PASSED
 tests/test_pedidos_logic.py::test_join_pedidos_pagamentos                PASSED
 tests/test_pedidos_logic.py::test_calcular_valor_total                   PASSED
 tests/test_pedidos_logic.py::test_selecionar_e_ordenar_colunas           PASSED
-
-5 passed in ~15s
 ```
 
 ---
