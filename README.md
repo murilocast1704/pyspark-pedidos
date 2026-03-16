@@ -1,6 +1,8 @@
 # PySpark Pedidos — Relatório de Pagamentos Recusados
 
-Projeto em PySpark orientado a objetos que gera um relatório de pedidos com pagamentos **recusados** (`status=false`) e classificados como **legítimos** (`fraude=false`) no ano de **2025**.
+Projeto em PySpark orientado a objetos que gera um relatório de pedidos com pagamentos **recusados** (`status=false`) e classificados como **legítimos** (`avaliacao_fraude.fraude=false`) no ano de **2025**.
+
+Desenvolvido no ambiente **AWS Cloud9** utilizando Python 3.10 e PySpark 3.5.0.
 
 ---
 
@@ -8,25 +10,30 @@ Projeto em PySpark orientado a objetos que gera um relatório de pedidos com pag
 
 ```
 projeto/
-├── main.py                              # Ponto de entrada do pipeline
+├── main.py                              # Aggregation Root — ponto de entrada e injeção de dependências
 ├── pyproject.toml                       # Configuração do build e dependências
 ├── requirements.txt                     # Dependências principais
 ├── MANIFEST.in                          # Arquivos incluídos no pacote
 ├── README.md                            # Documentação
 ├── data/                                # Datasets de entrada
-│   ├── pedidos/                         # CSV de pedidos
-│   └── pagamentos/                      # JSON de pagamentos
-├── output/                              # Saída em Parquet
-│   └── relatorio_pedidos/
-├── src/                                 # Código-fonte
-│   ├── config/app_config.py             # Configurações centralizadas
-│   ├── session/spark_session_manager.py # Gerenciamento da SparkSession
-│   ├── io/data_reader.py                # Leitura CSV/JSON com schema explícito
-│   ├── io/data_writer.py                # Escrita em Parquet
-│   ├── business/pedidos_logic.py        # Lógica de negócio (filtros, join, ordenação)
-│   └── pipeline/pipeline_orchestrator.py
+│   ├── pedidos/                         # Arquivos CSV de pedidos
+│   └── pagamentos/                      # Arquivos JSON de pagamentos
+├── output/                              # Saída gerada após execução
+│   └── relatorio_pedidos/               # Relatório final em Parquet
+├── src/                                 # Código-fonte da aplicação
+│   ├── config/
+│   │   └── app_config.py                # Configurações centralizadas (paths, filtros, ordenação)
+│   ├── session/
+│   │   └── spark_session_manager.py     # Criação e encerramento da SparkSession
+│   ├── io/
+│   │   ├── data_reader.py               # Leitura CSV/JSON com schemas explícitos
+│   │   └── data_writer.py               # Escrita do relatório em Parquet
+│   ├── business/
+│   │   └── pedidos_logic.py             # Lógica de negócio: filtros, join, cálculo e ordenação
+│   └── pipeline/
+│       └── pipeline_orchestrator.py     # Orquestração de todas as etapas do pipeline
 └── tests/
-    └── test_pedidos_logic.py            # Testes unitários (pytest)
+    └── test_pedidos_logic.py            # Testes unitários com pytest
 ```
 
 ---
@@ -41,7 +48,47 @@ projeto/
 
 ---
 
+## Schemas dos Datasets
+
+### Pedidos (CSV — separador `;`)
+
+| Coluna         | Tipo             | Descrição                        |
+|----------------|------------------|----------------------------------|
+| id_pedido      | string           | Identificador único do pedido    |
+| produto        | string           | Nome do produto                  |
+| valor_unitario | decimal(10,2)    | Valor unitário do produto        |
+| quantidade     | int              | Quantidade comprada              |
+| data_criacao   | timestamp        | Data de criação do pedido        |
+| uf             | string           | Estado (UF) onde o pedido foi feito |
+| id_cliente     | int              | Identificador do cliente         |
+
+### Pagamentos (JSON)
+
+| Coluna                    | Tipo          | Descrição                                      |
+|---------------------------|---------------|------------------------------------------------|
+| id_pedido                 | string        | Identificador do pedido (chave de join)        |
+| forma_pagamento           | string        | Forma de pagamento (PIX, BOLETO, CARTAO)       |
+| valor_pagamento           | double        | Valor do pagamento                             |
+| status                    | boolean       | `true` = aprovado / `false` = recusado         |
+| data_processamento        | string        | Data de processamento no formato ISO           |
+| avaliacao_fraude.fraude   | boolean       | `true` = fraude / `false` = legítimo           |
+| avaliacao_fraude.score    | double        | Score de risco de fraude (0.0 a 1.0)           |
+
+### Relatório Gerado (Parquet)
+
+| Coluna             | Tipo          | Descrição                              |
+|--------------------|---------------|----------------------------------------|
+| id_pedido          | string        | Identificador único do pedido          |
+| uf                 | string        | Estado onde o pedido foi feito         |
+| forma_pagamento    | string        | Forma de pagamento                     |
+| valor_total_pedido | decimal(10,2) | Valor total (valor_unitario * quantidade) |
+| data_criacao       | timestamp     | Data de criação do pedido              |
+
+---
+
 ## Configuração do Ambiente
+
+### Ambiente local
 
 ```bash
 # Clone o repositório
@@ -54,6 +101,28 @@ source .venv/bin/activate      # Linux/macOS
 # .venv\Scripts\activate       # Windows
 
 # Instale as dependências
+pip install -r requirements.txt
+```
+
+### AWS Cloud9
+
+O projeto foi desenvolvido e validado no **AWS Cloud9**. Siga os passos abaixo para executá-lo no mesmo ambiente:
+
+```bash
+# 1. Acesse o terminal integrado do Cloud9 (painel inferior da tela)
+
+# 2. Navegue até a pasta de trabalho
+cd ~/environment
+
+# 3. Clone o repositório do projeto
+git clone https://github.com/murilocast1704/pyspark-pedidos.git
+cd pyspark-pedidos
+
+# 4. Crie e ative o ambiente virtual
+python -m venv .venv
+source .venv/bin/activate
+
+# 5. Instale as dependências
 pip install -r requirements.txt
 ```
 
@@ -70,6 +139,12 @@ cp -r /tmp/pedidos/data/pedidos/* data/pedidos/
 git clone https://github.com/infobarbosa/dataset-json-pagamentos /tmp/pagamentos
 cp -r /tmp/pagamentos/data/pagamentos/* data/pagamentos/
 ```
+
+> Caso os repositórios já estejam clonados no seu ambiente Cloud9 (ex: `~/environment/projeto/`), basta copiar diretamente:
+> ```bash
+> cp -r ~/environment/projeto/datasets-csv-pedidos/data/pedidos/* data/pedidos/
+> cp -r ~/environment/projeto/dataset-json-pagamentos/data/pagamentos/* data/pagamentos/
+> ```
 
 ---
 
@@ -94,28 +169,49 @@ df.show()
 
 ## Testes Unitários
 
+Os testes cobrem todos os métodos da classe `PedidosLogic` e são executados com **pytest**.
+
+### Executar os testes
+
 ```bash
+# Rodar todos os testes com detalhes
 pytest tests/ -v
 
 # Com relatório de cobertura
 pytest tests/ -v --cov=src
 ```
 
+### Testes implementados
+
+| Teste | Método testado | O que valida |
+|-------|---------------|--------------|
+| `test_filtrar_pagamentos_recusados_legitimos` | `filtrar_pagamentos_recusados_legitimos()` | Retém apenas registros com `status=False` e `avaliacao_fraude.fraude=False`, descartando aprovados e fraudulentos |
+| `test_filtrar_ano` | `filtrar_ano()` | Retém apenas pedidos do ano 2025, descartando registros de outros anos |
+| `test_join_pedidos_pagamentos` | `join_pedidos_pagamentos()` | Valida que o join entre pedidos e pagamentos retorna apenas os registros com `id_pedido` correspondente nos dois datasets |
+| `test_calcular_valor_total` | `calcular_valor_total()` | Verifica que a coluna `valor_total_pedido` é calculada corretamente como `valor_unitario * quantidade` |
+| `test_selecionar_e_ordenar_colunas` | `selecionar_e_ordenar()` | Confirma que o relatório final contém exatamente as colunas esperadas: `id_pedido`, `uf`, `forma_pagamento`, `valor_total_pedido`, `data_criacao` |
+
+### Resultado esperado
+
+```
+tests/test_pedidos_logic.py::test_filtrar_pagamentos_recusados_legitimos PASSED
+tests/test_pedidos_logic.py::test_filtrar_ano                            PASSED
+tests/test_pedidos_logic.py::test_join_pedidos_pagamentos                PASSED
+tests/test_pedidos_logic.py::test_calcular_valor_total                   PASSED
+tests/test_pedidos_logic.py::test_selecionar_e_ordenar_colunas           PASSED
+
+5 passed in ~15s
+```
+
 ---
 
-## Relatório Gerado
-
-| Coluna              | Descrição                        |
-|---------------------|----------------------------------|
-| id_pedido           | Identificador único do pedido    |
-| uf                  | Estado onde o pedido foi feito   |
-| forma_pagamento     | Forma de pagamento               |
-| valor_total_pedido  | Valor total do pedido            |
-| data_criacao        | Data de criação do pedido        |
+## Regras de Negócio
 
 **Filtros aplicados:**
-- Apenas pedidos do ano de **2025**
+- Apenas pedidos do ano de **2025** (campo `data_criacao`)
 - Pagamentos com `status = false` (recusados)
 - Pagamentos com `avaliacao_fraude.fraude = false` (legítimos)
 
-**Ordenação:** `uf` → `forma_pagamento` → `data_criacao`
+**Ordenação do relatório:** `uf` → `forma_pagamento` → `data_criacao`
+
+**Cálculo do valor total:** `valor_unitario × quantidade` (o dataset de pedidos não possui campo de valor total direto)
