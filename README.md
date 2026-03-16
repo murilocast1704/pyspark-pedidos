@@ -48,81 +48,58 @@ projeto/
 
 ---
 
-## Schemas dos Datasets
+## Configurando o Ambiente AWS Cloud9
 
-### Pedidos (CSV — separador `;`)
+O projeto foi desenvolvido e validado no **AWS Cloud9**. Siga os passos abaixo para criar e configurar o ambiente.
 
-| Coluna         | Tipo             | Descrição                        |
-|----------------|------------------|----------------------------------|
-| id_pedido      | string           | Identificador único do pedido    |
-| produto        | string           | Nome do produto                  |
-| valor_unitario | decimal(10,2)    | Valor unitário do produto        |
-| quantidade     | int              | Quantidade comprada              |
-| data_criacao   | timestamp        | Data de criação do pedido        |
-| uf             | string           | Estado (UF) onde o pedido foi feito |
-| id_cliente     | int              | Identificador do cliente         |
+### Passo 1 — Criar o ambiente via CloudShell
 
-### Pagamentos (JSON)
+> **Atenção:** verifique a região no topo à direita do console AWS. Normalmente é **Norte da Virgínia (us-east-1)**. Não altere essa configuração.
 
-| Coluna                    | Tipo          | Descrição                                      |
-|---------------------------|---------------|------------------------------------------------|
-| id_pedido                 | string        | Identificador do pedido (chave de join)        |
-| forma_pagamento           | string        | Forma de pagamento (PIX, BOLETO, CARTAO)       |
-| valor_pagamento           | double        | Valor do pagamento                             |
-| status                    | boolean       | `true` = aprovado / `false` = recusado         |
-| data_processamento        | string        | Data de processamento no formato ISO           |
-| avaliacao_fraude.fraude   | boolean       | `true` = fraude / `false` = legítimo           |
-| avaliacao_fraude.score    | double        | Score de risco de fraude (0.0 a 1.0)           |
+1. Acesse o console da AWS e na barra de busca superior digite **CloudShell**
+2. Clique no link **CloudShell** — um shell será disponibilizado
+3. Execute o comando abaixo para criar o ambiente Cloud9 automaticamente:
 
-### Relatório Gerado (Parquet)
+```bash
+curl -sS https://raw.githubusercontent.com/infobarbosa/data-engineering-cloud9/main/assets/scripts/lab-data-eng-cloud9-environment.sh | bash
+```
 
-| Coluna             | Tipo          | Descrição                              |
-|--------------------|---------------|----------------------------------------|
-| id_pedido          | string        | Identificador único do pedido          |
-| uf                 | string        | Estado onde o pedido foi feito         |
-| forma_pagamento    | string        | Forma de pagamento                     |
-| valor_total_pedido | decimal(10,2) | Valor total (valor_unitario * quantidade) |
-| data_criacao       | timestamp     | Data de criação do pedido              |
+> A criação leva de **2 a 3 minutos**.
+
+### Passo 2 — Acessar o ambiente Cloud9
+
+1. Na barra de busca superior digite **Cloud9**
+2. Clique no link **Cloud9** — será aberto o painel com a lista de ambientes
+3. Clique em **Em aberto** para abrir o IDE do ambiente criado
+4. Uma nova aba será aberta com o IDE do Cloud9
+
+### Passo 3 — Configurar o ambiente
+
+No terminal do Cloud9 (painel inferior da tela), execute:
+
+```bash
+curl -sS https://raw.githubusercontent.com/infobarbosa/data-engineering-cloud9/main/assets/scripts/setup_cloud9_env.sh | bash
+```
 
 ---
 
-## Configuração do Ambiente
+## Instalação do Projeto
 
-### Ambiente local
-
-```bash
-# Clone o repositório
-git clone https://github.com/murilocast1704/pyspark-pedidos.git
-cd pyspark-pedidos
-
-# Crie e ative o ambiente virtual
-python -m venv .venv
-source .venv/bin/activate      # Linux/macOS
-# .venv\Scripts\activate       # Windows
-
-# Instale as dependências
-pip install -r requirements.txt
-```
-
-### AWS Cloud9
-
-O projeto foi desenvolvido e validado no **AWS Cloud9**. Siga os passos abaixo para executá-lo no mesmo ambiente:
+Com o ambiente Cloud9 configurado, execute no terminal:
 
 ```bash
-# 1. Acesse o terminal integrado do Cloud9 (painel inferior da tela)
-
-# 2. Navegue até a pasta de trabalho
+# 1. Navegue até a pasta de trabalho
 cd ~/environment
 
-# 3. Clone o repositório do projeto
+# 2. Clone o repositório do projeto
 git clone https://github.com/murilocast1704/pyspark-pedidos.git
 cd pyspark-pedidos
 
-# 4. Crie e ative o ambiente virtual
+# 3. Crie e ative o ambiente virtual
 python -m venv .venv
 source .venv/bin/activate
 
-# 5. Instale as dependências
+# 4. Instale as dependências
 pip install -r requirements.txt
 ```
 
@@ -140,11 +117,49 @@ git clone https://github.com/infobarbosa/dataset-json-pagamentos /tmp/pagamentos
 cp -r /tmp/pagamentos/data/pagamentos/* data/pagamentos/
 ```
 
-> Caso os repositórios já estejam clonados no seu ambiente Cloud9 (ex: `~/environment/projeto/`), basta copiar diretamente:
+> Caso os repositórios já estejam clonados no seu ambiente (ex: `~/environment/projeto/`), basta copiar diretamente:
 > ```bash
 > cp -r ~/environment/projeto/datasets-csv-pedidos/data/pedidos/* data/pedidos/
 > cp -r ~/environment/projeto/dataset-json-pagamentos/data/pagamentos/* data/pagamentos/
 > ```
+
+---
+
+## Schemas dos Datasets
+
+### Pedidos (CSV — separador `;`)
+
+| Coluna         | Tipo          | Descrição                           |
+|----------------|---------------|-------------------------------------|
+| id_pedido      | string        | Identificador único do pedido       |
+| produto        | string        | Nome do produto                     |
+| valor_unitario | decimal(10,2) | Valor unitário do produto           |
+| quantidade     | int           | Quantidade comprada                 |
+| data_criacao   | timestamp     | Data de criação do pedido           |
+| uf             | string        | Estado (UF) onde o pedido foi feito |
+| id_cliente     | int           | Identificador do cliente            |
+
+### Pagamentos (JSON)
+
+| Coluna                  | Tipo          | Descrição                                    |
+|-------------------------|---------------|----------------------------------------------|
+| id_pedido               | string        | Identificador do pedido (chave de join)      |
+| forma_pagamento         | string        | Forma de pagamento (PIX, BOLETO, CARTAO)     |
+| valor_pagamento         | double        | Valor do pagamento                           |
+| status                  | boolean       | `true` = aprovado / `false` = recusado       |
+| data_processamento      | string        | Data de processamento no formato ISO         |
+| avaliacao_fraude.fraude | boolean       | `true` = fraude / `false` = legítimo         |
+| avaliacao_fraude.score  | double        | Score de risco de fraude (0.0 a 1.0)         |
+
+### Relatório Gerado (Parquet)
+
+| Coluna             | Tipo          | Descrição                                        |
+|--------------------|---------------|--------------------------------------------------|
+| id_pedido          | string        | Identificador único do pedido                    |
+| uf                 | string        | Estado onde o pedido foi feito                   |
+| forma_pagamento    | string        | Forma de pagamento                               |
+| valor_total_pedido | decimal(10,2) | Valor total calculado (valor_unitario * quantidade) |
+| data_criacao       | timestamp     | Data de criação do pedido                        |
 
 ---
 
@@ -184,12 +199,12 @@ pytest tests/ -v --cov=src
 ### Testes implementados
 
 | Teste | Método testado | O que valida |
-|-------|---------------|--------------|
+|-------|----------------|--------------|
 | `test_filtrar_pagamentos_recusados_legitimos` | `filtrar_pagamentos_recusados_legitimos()` | Retém apenas registros com `status=False` e `avaliacao_fraude.fraude=False`, descartando aprovados e fraudulentos |
 | `test_filtrar_ano` | `filtrar_ano()` | Retém apenas pedidos do ano 2025, descartando registros de outros anos |
-| `test_join_pedidos_pagamentos` | `join_pedidos_pagamentos()` | Valida que o join entre pedidos e pagamentos retorna apenas os registros com `id_pedido` correspondente nos dois datasets |
-| `test_calcular_valor_total` | `calcular_valor_total()` | Verifica que a coluna `valor_total_pedido` é calculada corretamente como `valor_unitario * quantidade` |
-| `test_selecionar_e_ordenar_colunas` | `selecionar_e_ordenar()` | Confirma que o relatório final contém exatamente as colunas esperadas: `id_pedido`, `uf`, `forma_pagamento`, `valor_total_pedido`, `data_criacao` |
+| `test_join_pedidos_pagamentos` | `join_pedidos_pagamentos()` | Valida que o join entre pedidos e pagamentos retorna apenas registros com `id_pedido` correspondente nos dois datasets |
+| `test_calcular_valor_total` | `calcular_valor_total()` | Verifica que `valor_total_pedido` é calculado corretamente como `valor_unitario * quantidade` |
+| `test_selecionar_e_ordenar_colunas` | `selecionar_e_ordenar()` | Confirma que o relatório final contém exatamente as colunas: `id_pedido`, `uf`, `forma_pagamento`, `valor_total_pedido`, `data_criacao` |
 
 ### Resultado esperado
 
@@ -212,4 +227,4 @@ tests/test_pedidos_logic.py::test_selecionar_e_ordenar_colunas           PASSED
 
 **Ordenação do relatório:** `uf` → `forma_pagamento` → `data_criacao`
 
-**Cálculo do valor total:** `valor_unitario × quantidade` (o dataset de pedidos não possui campo de valor total direto)
+**Cálculo do valor total:** `valor_unitario × quantidade` — o dataset de pedidos não possui campo de valor total direto
