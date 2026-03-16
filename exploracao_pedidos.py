@@ -22,12 +22,3 @@ df = spark.read \
 df.printSchema()
 
 df.show()
-
-df.filter(df.ID_PEDIDO == "b041ce31-10ae-4af1-becc-68507500cf2a").show()
-
-
-## Ler o resultado do pipeline
-df_resultado = spark.read.parquet("projeto/output/relatorio_pedidos/")
-df_resultado.printSchema()
-print("Total de linhas:", df_resultado.count())
-df_resultado.show()
