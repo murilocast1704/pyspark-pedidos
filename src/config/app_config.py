@@ -1,5 +1,5 @@
 class AppConfig:
-    """Centraliza todas as configurações da aplicação."""
+    """Configurações da aplicação."""
  
     # Spark
     APP_NAME: str = "PySpark Pedidos - Relatório Pagamentos Recusados"

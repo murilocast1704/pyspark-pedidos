@@ -1,8 +1,3 @@
-"""
-tests/test_pedidos_logic.py
-Testes unitários para a classe PedidosLogic.
-"""
-
 import pytest
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.types import (
