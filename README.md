@@ -193,8 +193,6 @@ Os testes cobrem todos os métodos da classe `PedidosLogic` e são executados co
 # Rodar todos os testes com detalhes
 pytest tests/ -v
 
-# Com relatório de cobertura
-pytest tests/ -v --cov=src
 ```
 
 ### Testes implementados
