@@ -206,9 +206,6 @@ Os testes cobrem todos os métodos da classe `PedidosLogic` e são executados co
 ```bash
 # Rodar todos os testes com detalhes
 pytest tests/ -v
-
-# Com relatório de cobertura
-pytest tests/ -v --cov=src
 ```
 
 ### Testes implementados
@@ -229,8 +226,6 @@ tests/test_pedidos_logic.py::test_filtrar_ano                            PASSED
 tests/test_pedidos_logic.py::test_join_pedidos_pagamentos                PASSED
 tests/test_pedidos_logic.py::test_calcular_valor_total                   PASSED
 tests/test_pedidos_logic.py::test_selecionar_e_ordenar_colunas           PASSED
-
-5 passed in ~15s
 ```
 
 ---
