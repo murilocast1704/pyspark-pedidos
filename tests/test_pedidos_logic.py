@@ -33,7 +33,7 @@ def logic(config):
 
 
 # ---------------------------------------------------------------------------
-# Fixtures com schemas em minúsculo
+# Fixtures com schemas
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
@@ -50,9 +50,9 @@ def df_pagamentos(spark):
         ]), True),
     ])
     data = [
-        Row(id_pedido="p1", forma_pagamento="Pix",    valor_pagamento=Decimal("100.00"), status=False, data_processamento=datetime(2025,1,1), avaliacao_fraude=Row(fraude=False, score=0.1)),  # KEEP
-        Row(id_pedido="p2", forma_pagamento="Cartao", valor_pagamento=Decimal("200.00"), status=True,  data_processamento=datetime(2025,1,2), avaliacao_fraude=Row(fraude=False, score=0.2)),  # aprovado → DROP
-        Row(id_pedido="p3", forma_pagamento="Boleto", valor_pagamento=Decimal("300.00"), status=False, data_processamento=datetime(2025,1,3), avaliacao_fraude=Row(fraude=True,  score=0.9)),  # fraude → DROP
+        Row(id_pedido="p1", forma_pagamento="Pix",    valor_pagamento=Decimal("100.00"), status=False, data_processamento=datetime(2025,1,1), avaliacao_fraude=Row(fraude=False, score=0.1)), #KEEP
+        Row(id_pedido="p2", forma_pagamento="Cartao", valor_pagamento=Decimal("200.00"), status=True,  data_processamento=datetime(2025,1,2), avaliacao_fraude=Row(fraude=False, score=0.2)), #aprovado-DROP
+        Row(id_pedido="p3", forma_pagamento="Boleto", valor_pagamento=Decimal("300.00"), status=False, data_processamento=datetime(2025,1,3), avaliacao_fraude=Row(fraude=True,  score=0.9)), #fraude- DROP
     ]
     return spark.createDataFrame(data, schema)
 

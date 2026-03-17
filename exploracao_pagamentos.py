@@ -10,7 +10,7 @@ pagamentos_schema = StructType([
     StructField("forma_pagamento", StringType(), True),
     StructField("valor_pagamento", DecimalType(10, 2), True),
     StructField("status", BooleanType(), True),
-    StructField("data_processamento", TimestampType(), True),
+    StructField("data_processamento", StringType(), True),
     StructField("avaliacao_fraude", StructType([
         StructField("fraude", BooleanType(), True),
         StructField("score", DoubleType(), True)
@@ -28,11 +28,3 @@ df_pagamentos.select(
     "*",
     "avaliacao_fraude.*"
 ).drop("avaliacao_fraude").show()
-
-df_pagamentos.filter(
-    (df_pagamentos.status == False) & (df_pagamentos.fraude == False)
-).show(truncate=False)
-
-print("Total de linhas válidas:", df_pagamentos.filter(
-    (df_pagamentos.status == False) & (df_pagamentos.fraude == False)
-).count())

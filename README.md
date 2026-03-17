@@ -1,4 +1,4 @@
-# PySpark Pedidos — Relatório de Pagamentos Recusados
+# Pyspark Pedidos Relatório de Pagamentos Recusados
 
 Projeto em PySpark orientado a objetos que gera um relatório de pedidos com pagamentos **recusados** (`status=false`) e classificados como **legítimos** (`avaliacao_fraude.fraude=false`) no ano de **2025**.
 

@@ -7,7 +7,6 @@ from pyspark.sql.types import (
 from src.config.app_config import AppConfig
 
 class DataReader:
-    """Lê os datasets de pedidos e pagamentos com schemas explícitos."""
 
     # Schema explícito — pedidos CSV
     SCHEMA_PEDIDOS: StructType = StructType([
