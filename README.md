@@ -1,4 +1,4 @@
-# Pyspark Pedidos Relatório de Pagamentos Recusados
+# PySpark Pedidos — Relatório de Pagamentos Recusados
 
 Projeto em PySpark orientado a objetos que gera um relatório de pedidos com pagamentos **recusados** (`status=false`) e classificados como **legítimos** (`avaliacao_fraude.fraude=false`) no ano de **2025**.
 
@@ -9,7 +9,7 @@ Desenvolvido no ambiente **AWS Cloud9** utilizando Python 3.10 e PySpark 3.5.0.
 ## Estrutura do Projeto
 
 ```
-pyspark-pedidos/
+projeto/
 ├── main.py                              # Aggregation Root — ponto de entrada e injeção de dependências
 ├── pyproject.toml                       # Configuração do build e dependências
 ├── requirements.txt                     # Dependências principais
@@ -117,12 +117,6 @@ git clone https://github.com/infobarbosa/dataset-json-pagamentos /tmp/pagamentos
 cp -r /tmp/pagamentos/data/pagamentos/* data/pagamentos/
 ```
 
-> Caso os repositórios já estejam clonados no seu ambiente (ex: `~/environment/pyspark-pedidos/`), basta copiar diretamente:
-> ```bash
-> cp -r ~/environment/projeto/datasets-csv-pedidos/data/pedidos/* data/pedidos/
-> cp -r ~/environment/projeto/dataset-json-pagamentos/data/pagamentos/* data/pagamentos/
-> ```
-
 ---
 
 ## Schemas dos Datasets
@@ -171,14 +165,10 @@ python main.py
 
 O relatório será gravado em **Parquet** no diretório `output/relatorio_pedidos/`.
 
-### Leitura do resultado (opcional)
+Para visualizar o resultado, com o venv ativo execute:
 
-```python
-from pyspark.sql import SparkSession
-spark = SparkSession.builder.master("local[*]").getOrCreate()
-df = spark.read.parquet("./pyspark-pedidos/output/relatorio_pedidos")
-df.printSchema()
-df.show(20)
+```bash
+python resultado.py
 ```
 
 ---
@@ -193,6 +183,8 @@ Os testes cobrem todos os métodos da classe `PedidosLogic` e são executados co
 # Rodar todos os testes com detalhes
 pytest tests/ -v
 
+# Com relatório de cobertura
+pytest tests/ -v --cov=src
 ```
 
 ### Testes implementados
@@ -213,6 +205,8 @@ tests/test_pedidos_logic.py::test_filtrar_ano                            PASSED
 tests/test_pedidos_logic.py::test_join_pedidos_pagamentos                PASSED
 tests/test_pedidos_logic.py::test_calcular_valor_total                   PASSED
 tests/test_pedidos_logic.py::test_selecionar_e_ordenar_colunas           PASSED
+
+5 passed in ~15s
 ```
 
 ---
