@@ -107,15 +107,39 @@ pip install -r requirements.txt
 
 ## Datasets
 
+O projeto depende de dois datasets externos que **não estão incluídos no repositório**. É necessário baixá-los e copiá-los para as pastas corretas antes de executar o pipeline.
+
+### Passo 1 — Baixar os datasets
+
+Clone os repositórios dos datasets em uma pasta temporária:
+
 ```bash
 # Pedidos (CSV)
 git clone https://github.com/infobarbosa/datasets-csv-pedidos /tmp/pedidos
-cp -r /tmp/pedidos/data/pedidos/* data/pedidos/
 
 # Pagamentos (JSON)
 git clone https://github.com/infobarbosa/dataset-json-pagamentos /tmp/pagamentos
+```
+
+### Passo 2 — Copiar para o projeto
+
+Com os repositórios clonados, copie os arquivos para as pastas `data/` do projeto:
+
+```bash
+cp -r /tmp/pedidos/data/pedidos/* data/pedidos/
 cp -r /tmp/pagamentos/data/pagamentos/* data/pagamentos/
 ```
+
+### Passo 3 — Verificar
+
+Confirme que os arquivos foram copiados corretamente:
+
+```bash
+ls data/pedidos/
+ls data/pagamentos/
+```
+
+Você deve ver arquivos no formato `pedidos-YYYY-MM.csv.gz` e `pagamentos-YYYY-MM.json.gz` nas respectivas pastas.
 
 ---
 
