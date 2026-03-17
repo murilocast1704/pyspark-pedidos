@@ -9,7 +9,7 @@ Desenvolvido no ambiente **AWS Cloud9** utilizando Python 3.10 e PySpark 3.5.0.
 ## Estrutura do Projeto
 
 ```
-projeto/
+pyspark-pedidos/
 ├── main.py                              # Aggregation Root — ponto de entrada e injeção de dependências
 ├── pyproject.toml                       # Configuração do build e dependências
 ├── requirements.txt                     # Dependências principais
@@ -117,7 +117,7 @@ git clone https://github.com/infobarbosa/dataset-json-pagamentos /tmp/pagamentos
 cp -r /tmp/pagamentos/data/pagamentos/* data/pagamentos/
 ```
 
-> Caso os repositórios já estejam clonados no seu ambiente (ex: `~/environment/projeto/`), basta copiar diretamente:
+> Caso os repositórios já estejam clonados no seu ambiente (ex: `~/environment/pyspark-pedidos/`), basta copiar diretamente:
 > ```bash
 > cp -r ~/environment/projeto/datasets-csv-pedidos/data/pedidos/* data/pedidos/
 > cp -r ~/environment/projeto/dataset-json-pagamentos/data/pagamentos/* data/pagamentos/
@@ -176,8 +176,9 @@ O relatório será gravado em **Parquet** no diretório `output/relatorio_pedido
 ```python
 from pyspark.sql import SparkSession
 spark = SparkSession.builder.master("local[*]").getOrCreate()
-df = spark.read.parquet("output/relatorio_pedidos")
-df.show()
+df = spark.read.parquet("./pyspark-pedidos/output/relatorio_pedidos")
+df.printSchema()
+df.show(20)
 ```
 
 ---
